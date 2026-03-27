@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vidya Pathgamni – Learn from the Best, Teach the Rest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0d2149; --blue: #1a6cf6; --bright-blue: #2980f5;
+      --teal: #1a9e9e; --yellow: #f9b82f; --orange: #f9841f;
+      --light-bg: #f4f5f7; --text-dark: #1a1a2e; --text-muted: #666;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Manrope', sans-serif; color: var(--text-dark); overflow-x: hidden; }
+
+    /* NAV */
+    header { position: absolute; top: 0; left: 0; width: 100%; z-index: 100; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 60px; }
+    .logo { text-decoration: none; }
+    .logo span { font-size: 22px; font-weight: 900; letter-spacing: 1px; color: #fff; }
+    .logo span em { color: var(--yellow); font-style: normal; }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,.85); text-decoration: none; font-weight: 600; font-size: 14px; transition: color .2s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-btns { display: flex; align-items: center; gap: 12px; }
+    .btn-login { color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 50px; border: 2px solid rgba(255,255,255,.35); transition: all .2s; }
+    .btn-login:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+    .btn-signup { background: var(--yellow); color: #1a1a2e; font-weight: 700; padding: 10px 22px; border-radius: 50px; text-decoration: none; font-size: 14px; transition: all .2s; }
+    .btn-signup:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(249,184,47,.45); }
+
+    /* HERO */
+    .hero { background: var(--navy); min-height: 100vh; position: relative; display: flex; align-items: center; overflow: hidden; padding: 140px 60px 80px; }
+    .hero::before { content: ''; position: absolute; top: -100px; right: -100px; width: 580px; height: 580px; background: var(--bright-blue); border-radius: 50%; opacity: .8; }
+    .hero::after { content: ''; position: absolute; bottom: -140px; right: 180px; width: 440px; height: 440px; background: var(--blue); border-radius: 50%; opacity: .55; }
+    .hero-content { max-width: 580px; position: relative; z-index: 2; animation: fadeUp .8s ease both; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,.75); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; margin-bottom: 22px; }
+    .hero-badge-dot { width: 8px; height: 8px; background: var(--yellow); border-radius: 50%; }
+    .hero h1 { font-size: clamp(32px, 4.2vw, 58px); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 20px; }
+    .hero h1 span { color: var(--yellow); }
+    .hero-sub { color: rgba(255,255,255,.72); font-size: 16px; line-height: 1.75; max-width: 480px; margin-bottom: 38px; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-hero-primary { background: #fff; color: var(--navy); font-weight: 700; padding: 14px 28px; border-radius: 50px; text-decoration: none; font-size: 14px; transition: all .2s; border: 2px solid #fff; white-space: nowrap; }
+    .btn-hero-primary:hover { background: transparent; color: #fff; }
+    .btn-hero-secondary { background: transparent; color: #fff; font-weight: 700; padding: 14px 28px; border-radius: 50px; text-decoration: none; font-size: 14px; border: 2px solid rgba(255,255,255,.45); transition: all .2s; white-space: nowrap; }
+    .btn-hero-secondary:hover { border-color: #fff; background: rgba(255,255,255,.08); }
+    .hero-img-wrap { position: absolute; right: 60px; top: 50%; transform: translateY(-50%); z-index: 2; width: min(520px, 40vw); animation: fadeIn .9s .2s ease both; }
+    .hero-img-wrap img, .hero-img-wrap video, .hero-img-wrap iframe { width: 100%; border-radius: 20px; box-shadow: 0 30px 80px rgba(0,0,0,.45); display: block; }
+
+    /* TECH STRIP */
+    .tech-strip { background: #fff; padding: 36px 60px; display: flex; align-items: center; justify-content: center; gap: 48px; border-bottom: 1px solid #eee; flex-wrap: wrap; }
+    .tech-icon { font-size: 34px; transition: opacity .2s; cursor: default; }
+    .tech-icon:hover { opacity: 1 !important; }
+    .ti-html { color: #e34f26; opacity: .35; } .ti-css { color: #1572b6; opacity: .35; }
+    .ti-js { color: #d4a900; opacity: .4; } .ti-node { color: #339933; opacity: .35; }
+    .ti-py { color: #3776ab; opacity: .35; } .ti-react { color: #00b8d9; opacity: .35; }
+    .ti-vue { color: #42b883; opacity: .35; } .ti-ang { color: #dd0031; opacity: .35; }
+
+    /* SHARED */
+    .sec-tag { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; }
+    .sec-title { font-size: clamp(26px, 3vw, 40px); font-weight: 900; line-height: 1.2; margin-bottom: 14px; }
+    .sec-sub { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+    /* WHY CHOOSE US */
+    .why-section { background: var(--light-bg); padding: 90px 60px; }
+    .why-header { text-align: center; margin-bottom: 56px; }
+    .why-header .sec-title { max-width: 580px; margin: 0 auto 12px; }
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1100px; margin: 0 auto; }
+    .why-card { background: #fff; border-radius: 18px; padding: 34px 26px; box-shadow: 0 4px 24px rgba(0,0,0,.06); transition: transform .25s, box-shadow .25s; }
+    .why-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,.11); }
+    .why-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; font-size: 21px; }
+    .wi-blue { background: #e8f0fe; color: var(--blue); } .wi-teal { background: #e0f5f5; color: var(--teal); }
+    .wi-yellow { background: #fff8e1; color: #c98a00; } .wi-orange { background: #fff3e0; color: var(--orange); }
+    .wi-navy { background: #e8ecf5; color: var(--navy); } .wi-green { background: #e8f5e9; color: #2e7d32; }
+    .why-card h3 { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
+    .why-card p { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+    /* SPLIT SECTIONS */
+    .student-section { background: #fff; padding: 90px 60px; }
+    .teacher-section { background: var(--light-bg); padding: 90px 60px; }
+    .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; max-width: 1100px; margin: 0 auto; }
+    .split-img { border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.13); }
+    .split-img img { width: 100%; display: block; }
+    .feat-list { display: flex; flex-direction: column; gap: 26px; margin-top: 32px; }
+    .feat-item { display: flex; gap: 16px; align-items: flex-start; }
+    .feat-icon { min-width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 17px; background: #e8f0fe; color: var(--blue); }
+    .feat-icon-teal { background: #e0f5f5; color: var(--teal); }
+    .feat-item h4 { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+    .feat-item p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* HOW IT WORKS */
+    .how-section { background: var(--navy); padding: 90px 60px; }
+    .how-header { text-align: center; margin-bottom: 60px; }
+    .how-header .sec-tag { color: rgba(255,255,255,.5); }
+    .how-header .sec-title { color: #fff; }
+    .how-header .sec-sub { color: rgba(255,255,255,.6); max-width: 480px; margin: 0 auto; }
+    .how-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; max-width: 1000px; margin: 0 auto; }
+    .how-col-label { font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--yellow); margin-bottom: 28px; display: flex; align-items: center; gap: 10px; }
+    .how-col-label::after { content: ''; flex: 1; height: 1px; background: rgba(249,184,47,.25); }
+    .how-steps { display: flex; flex-direction: column; }
+    .how-step { display: flex; gap: 18px; padding-bottom: 30px; position: relative; }
+    .how-step:last-child { padding-bottom: 0; }
+    .how-step-left { display: flex; flex-direction: column; align-items: center; }
+    .how-num { width: 40px; height: 40px; border-radius: 50%; background: var(--yellow); color: #1a1a2e; font-weight: 900; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .how-line { flex: 1; width: 2px; background: rgba(249,184,47,.2); margin-top: 6px; }
+    .how-step:last-child .how-line { display: none; }
+    .how-step-content { padding-top: 7px; }
+    .how-step-content h4 { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 5px; }
+    .how-step-content p { font-size: 13px; color: rgba(255,255,255,.58); line-height: 1.6; }
+
+    /* COURSES */
+    .courses-section { background: #fff; padding: 90px 60px; }
+    .courses-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+    .courses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1100px; margin: 0 auto; }
+    .course-card { background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.07); border: 1px solid #eee; transition: transform .25s, box-shadow .25s; }
+    .course-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,.12); }
+    .course-card img { width: 100%; height: 185px; object-fit: cover; display: block; }
+    .card-body { padding: 20px; }
+    .card-cat { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--orange); margin-bottom: 8px; }
+    .card-body h3 { font-size: 15px; font-weight: 800; line-height: 1.35; margin-bottom: 10px; }
+    .card-teacher { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+    .card-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f0f0; padding-top: 12px; }
+    .card-stars { color: var(--yellow); font-size: 12px; }
+    .card-dur { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    .courses-filters { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; justify-content: center; }
+    .filter-btn { padding: 8px 16px; border: 2px solid #e0e0e0; background: #fff; border-radius: 25px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all .2s; }
+    .filter-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .filter-btn.active { border-color: var(--blue); background: var(--blue); color: #fff; }
+    .btn-outline { border: 2px solid var(--blue); color: var(--blue); font-weight: 700; padding: 14px 36px; border-radius: 50px; text-decoration: none; font-size: 15px; display: inline-block; transition: all .2s; }
+    .btn-outline:hover { background: var(--blue); color: #fff; }
+
+    /* TESTIMONIALS */
+    .testimonials-section { background: var(--light-bg); padding: 90px 60px; }
+    .t-header { text-align: center; margin-bottom: 16px; }
+    .rating-row { display: flex; align-items: center; justify-content: center; gap: 18px; margin-bottom: 48px; }
+    .rating-big-num { font-size: 60px; font-weight: 900; line-height: 1; }
+    .rating-info .stars { color: var(--orange); font-size: 18px; letter-spacing: 3px; margin-bottom: 4px; }
+    .rating-info p { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .t-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1100px; margin: 0 auto; }
+    .t-card { background: #fff; border-radius: 18px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,.06); }
+    .t-tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; margin-bottom: 16px; }
+    .t-tag.student { background: #e8f0fe; color: var(--blue); }
+    .t-tag.teacher { background: #e0f5f5; color: var(--teal); }
+    .t-card p.quote { font-size: 14px; line-height: 1.75; color: var(--text-dark); margin-bottom: 20px; font-style: italic; }
+    .t-footer { display: flex; justify-content: space-between; align-items: center; }
+    .t-person { display: flex; align-items: center; gap: 12px; }
+    .t-avatar { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+    .t-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .t-name { font-weight: 800; font-size: 14px; }
+    .t-role { font-size: 11px; color: var(--text-muted); }
+    .t-stars { color: var(--orange); font-size: 13px; letter-spacing: 2px; }
+
+    /* BENEFITS */
+    .benefits-section { background: #fff; padding: 90px 60px; }
+    .benefits-header { text-align: center; margin-bottom: 52px; }
+    .benefits-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; max-width: 980px; margin: 0 auto; }
+    .benefit-col { border-radius: 20px; padding: 38px 34px; }
+    .benefit-col.s-col { background: #e8f0fe; }
+    .benefit-col.t-col { background: #e0f5f5; }
+    .benefit-col-title { font-size: 19px; font-weight: 900; margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
+    .s-col .benefit-col-title { color: var(--blue); }
+    .t-col .benefit-col-title { color: var(--teal); }
+    .benefit-list { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+    .benefit-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; font-weight: 600; color: var(--text-dark); }
+    .benefit-list li i { margin-top: 2px; flex-shrink: 0; }
+    .s-col .benefit-list li i { color: var(--blue); }
+    .t-col .benefit-list li i { color: var(--teal); }
+
+    /* FINAL CTA */
+    .cta-section { background: var(--navy); padding: 100px 60px; text-align: center; position: relative; overflow: hidden; }
+    .cta-section::before { content: ''; position: absolute; top: -100px; left: -120px; width: 480px; height: 480px; background: var(--bright-blue); border-radius: 50%; opacity: .35; }
+    .cta-section::after { content: ''; position: absolute; bottom: -130px; right: -80px; width: 420px; height: 420px; background: var(--blue); border-radius: 50%; opacity: .3; }
+    .cta-inner { position: relative; z-index: 2; }
+    .cta-section .sec-tag { color: rgba(255,255,255,.5); }
+    .cta-section h2 { font-size: clamp(28px, 4vw, 50px); font-weight: 900; color: #fff; margin-bottom: 16px; line-height: 1.15; }
+    .cta-section p { color: rgba(255,255,255,.7); font-size: 16px; line-height: 1.7; max-width: 520px; margin: 0 auto 40px; }
+    .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-cta-primary { background: var(--yellow); color: #1a1a2e; font-weight: 800; padding: 16px 34px; border-radius: 50px; text-decoration: none; font-size: 15px; transition: all .2s; }
+    .btn-cta-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(249,184,47,.4); }
+    .btn-cta-secondary { background: transparent; color: #fff; font-weight: 700; padding: 16px 34px; border-radius: 50px; text-decoration: none; font-size: 15px; border: 2px solid rgba(255,255,255,.4); transition: all .2s; }
+    .btn-cta-secondary:hover { border-color: #fff; background: rgba(255,255,255,.08); }
+
+    /* FAQ */
+    .faq-section { background: var(--light-bg); padding: 90px 60px; }
+    .faq-header { text-align: center; margin-bottom: 56px; }
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1100px; margin: 0 auto; }
+    .faq-item { background: #fff; border-radius: 18px; box-shadow: 0 4px 24px rgba(0,0,0,.06); overflow: hidden; }
+    .faq-question { padding: 24px 26px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--text-dark); transition: background .2s; }
+    .faq-question:hover { background: #f9f9f9; }
+    .faq-icon { font-size: 14px; color: var(--blue); transition: transform .2s; }
+    .faq-item.active .faq-icon { transform: rotate(45deg); }
+    .faq-answer { padding: 0 26px 24px; color: var(--text-muted); line-height: 1.6; max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .faq-item.active .faq-answer { max-height: 500px; }
+    footer { background: #0a0a0a; padding: 80px 60px 32px; }
+    .footer-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr 1.2fr; gap: 40px; padding-bottom: 52px; border-bottom: 1px solid rgba(255,255,255,.07); }
+    .footer-brand { font-size: 20px; font-weight: 900; letter-spacing: 1px; color: #fff; margin-bottom: 14px; display: block; }
+    .footer-brand em { color: var(--yellow); font-style: normal; }
+    .footer-desc { color: rgba(255,255,255,.42); font-size: 13px; line-height: 1.75; margin-bottom: 20px; }
+    .social-row { display: flex; gap: 10px; }
+    .social-row a { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,.12); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.42); font-size: 13px; text-decoration: none; transition: all .2s; }
+    .social-row a:hover { border-color: var(--yellow); color: var(--yellow); }
+    .footer-col h5 { color: #fff; font-size: 14px; font-weight: 800; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { color: rgba(255,255,255,.42); text-decoration: none; font-size: 13px; transition: color .2s; }
+    .footer-col ul a:hover { color: #fff; }
+    .contact-block { display: flex; flex-direction: column; gap: 10px; }
+    .contact-block p { color: rgba(255,255,255,.42); font-size: 13px; display: flex; gap: 8px; align-items: flex-start; line-height: 1.5; }
+    .contact-block p i { margin-top: 2px; flex-shrink: 0; color: var(--yellow); font-size: 11px; }
+    .footer-bottom { max-width: 1100px; margin: 26px auto 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .footer-bottom p { color: rgba(255,255,255,.28); font-size: 12px; }
+    .footer-bottom-links { display: flex; gap: 18px; }
+    .footer-bottom-links a { color: rgba(255,255,255,.28); font-size: 12px; text-decoration: none; transition: color .2s; }
+    .footer-bottom-links a:hover { color: rgba(255,255,255,.7); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      nav { padding: 18px 24px; } .nav-links { display: none; }
+      .hero { padding: 140px 24px 60px; } .hero-img-wrap { display: none; }
+      .tech-strip { padding: 24px; gap: 24px; }
+      .why-section, .student-section, .teacher-section, .how-section,
+      .courses-section, .testimonials-section, .benefits-section, .cta-section { padding: 60px 24px; }
+      .why-grid { grid-template-columns: 1fr 1fr; }
+      .split-grid { grid-template-columns: 1fr; }
+      .split-img { display: none; }
+      .how-cols { grid-template-columns: 1fr; gap: 40px; }
+      .courses-grid { grid-template-columns: 1fr 1fr; }
+      .courses-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .t-grid { grid-template-columns: 1fr; }
+      .benefits-cols { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      footer { padding: 60px 24px 24px; }
+    }
+    @media (max-width: 560px) {
+      .why-grid, .courses-grid, .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<header>
+  <nav>
+    <a href="#" class="logo"><span>Vidya <em>Pathgamni</em></span></a>
+    <ul class="nav-links">
+      <li><a href="#courses">Courses</a></li>
+      <li><a href="#students">For Students</a></li>
+      <li><a href="#teachers">For Teachers</a></li>
+      <li><a href="#about">About Us</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-btns">
+      <a href="signin.html" class="btn-login">Login</a>
+    </div>
+  </nav>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge"><span class="hero-badge-dot"></span> Online Learning Platform</div>
+    <h1>Unlock Your Potential: Learn from the <span>Best</span> or Teach the Rest!</h1>
+    <p class="hero-sub">Empowering students with top courses and teachers with global reach. Your journey to online education excellence starts here.</p>
+    <div class="hero-btns">
+      <a href="#courses" class="btn-hero-primary">Browse Courses &amp; Start Learning</a>
+      <a href="#teachers" class="btn-hero-secondary">Create &amp; Sell Your Courses</a>
+    </div>
+  </div>
+  <div class="hero-img-wrap">
+    <img src="img.2.png" alt="Teacher teaching children">
+  </div>
+</section>
+
+<!-- ── TECH STRIP ── -->
+<div class="tech-strip">
+  <i class="fab fa-html5 tech-icon ti-html"></i>
+  <i class="fab fa-css3-alt tech-icon ti-css"></i>
+  <i class="fab fa-js-square tech-icon ti-js"></i>
+  <i class="fab fa-node-js tech-icon ti-node"></i> 
+  <i class="fab fa-python tech-icon ti-py"></i>
+  <i class="fab fa-react tech-icon ti-react"></i>
+  <i class="fab fa-vuejs tech-icon ti-vue"></i>
+  <i class="fab fa-angular tech-icon ti-ang"></i>
+</div>
+
+<!-- ── WHY CHOOSE US ── -->
+<section class="why-section" id="about">
+  <div class="why-header">
+    <p class="sec-tag">Value Proposition</p>
+    <h2 class="sec-title">Your Gateway to Online Education Success</h2>
+    <p class="sec-sub" style="max-width:500px;margin:0 auto;">Everything you need — whether you're here to learn or here to teach.</p>
+  </div>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon wi-blue"><i class="fas fa-graduation-cap"></i></div>
+      <h3>Diverse, High-Quality Courses</h3>
+      <p>Access courses taught by industry experts covering tech, design, business, and more — all in one place.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon wi-teal"><i class="fas fa-clock"></i></div>
+      <h3>Learn at Your Own Pace</h3>
+      <p>Study anytime, anywhere. Our flexible model fits your schedule, not the other way around.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon wi-yellow"><i class="fas fa-certificate"></i></div>
+      <h3>Earn Recognised Certificates</h3>
+      <p>Boost your career with professional certificates that validate your skills to employers worldwide.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon wi-orange"><i class="fas fa-chalkboard-teacher"></i></div>
+      <h3>Effortless Course Creation</h3>
+      <p>Teachers can build and publish compelling courses with our intuitive, user-friendly creation tools.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon wi-navy"><i class="fas fa-wallet"></i></div>
+      <h3>Reach Global &amp; Earn Passively</h3>
+      <p>Reach global audiences and build a sustainable income stream from your knowledge and expertise.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon wi-green"><i class="fas fa-users"></i></div>
+      <h3>Vibrant Community</h3>
+      <p>Connect, collaborate, and grow with fellow learners and educators who share your passion.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── STUDENT FEATURES ── -->
+<section class="student-section" id="students">
+  <div class="split-grid">
+    <div class="split-img">
+      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=700&q=80" alt="Students learning together" />
+    </div>
+    <div>
+      <p class="sec-tag">For Students</p>
+      <h2 class="sec-title">Transform Your Learning Journey</h2>
+      <p class="sec-sub">Dive into an immersive learning experience designed for your success.</p>
+      <div class="feat-list">
+        <div class="feat-item">
+          <div class="feat-icon"><i class="fas fa-search"></i></div>
+          <div><h4>Discover Tailored Courses</h4><p>Explore thousands of courses matched to your interests, career goals, and skill level.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon"><i class="fas fa-play-circle"></i></div>
+          <div><h4>Interactive Video Lessons</h4><p>Engage with HD video content, quizzes, and hands-on assignments that make learning stick.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon"><i class="fas fa-chart-line"></i></div>
+          <div><h4>Progress Tracking Dashboard</h4><p>Monitor your growth with a personalized dashboard and stay motivated every step of the way.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon"><i class="fas fa-comments"></i></div>
+          <div><h4>Discussion Forums</h4><p>Interact with teachers and peers, ask questions, share insights, and grow as a community.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon"><i class="fas fa-award"></i></div>
+          <div><h4>Digital Certificates</h4><p>Showcase your achievements with shareable digital certificates upon course completion.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TEACHER FEATURES ── -->
+<section class="teacher-section" id="teachers">
+  <div class="split-grid">
+    <div>
+      <p class="sec-tag">For Teachers</p>
+      <h2 class="sec-title">Inspire and Impact Learners Worldwide</h2>
+      <p class="sec-sub">Share your expertise, build your brand, and unlock your earning potential.</p>
+      <div class="feat-list">
+        <div class="feat-item">
+          <div class="feat-icon feat-icon-teal"><i class="fas fa-tools"></i></div>
+          <div><h4>Intuitive Course Builder</h4><p>Create compelling courses easily with drag-and-drop tools — no technical skills needed.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon feat-icon-teal"><i class="fas fa-bullhorn"></i></div>
+          <div><h4>Built-in Marketing Tools</h4><p>Reach targeted audiences through our marketing support and grow your personal brand effortlessly.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon feat-icon-teal"><i class="fas fa-chart-bar"></i></div>
+          <div><h4>Analytics Dashboard</h4><p>Track enrollment, revenue, and student engagement in real time with powerful reporting tools.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon feat-icon-teal"><i class="fas fa-tags"></i></div>
+          <div><h4>Flexible Pricing Control</h4><p>Set your own prices, offer discounts, and manage course access entirely on your own terms.</p></div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon feat-icon-teal"><i class="fas fa-credit-card"></i></div>
+          <div><h4>Secure Payment Gateway</h4><p>Receive payments securely and efficiently through our integrated, multi-currency payment systems.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="split-img">
+      <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=700&q=80" alt="Teacher presenting online course" />
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how-section">
+  <div class="how-header">
+    <p class="sec-tag">Process Flow</p>
+    <h2 class="sec-title">Your Journey to Online Education Excellence</h2>
+    <p class="sec-sub">Get started in minutes — whether you're learning or teaching.</p>
+  </div>
+  <div class="how-cols">
+    <div>
+      <p class="how-col-label"><i class="fas fa-user-graduate"></i> For Students</p>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-step-left"><div class="how-num">1</div><div class="how-line"></div></div>
+          <div class="how-step-content"><h4>Create Your Free Account</h4><p>Sign up in seconds — completely free and easy to get started.</p></div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-left"><div class="how-num">2</div><div class="how-line"></div></div>
+          <div class="how-step-content"><h4>Browse &amp; Enroll in Courses</h4><p>Explore our library and enroll in courses that match your goals and spark curiosity.</p></div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-left"><div class="how-num">3</div><div class="how-line"></div></div>
+          <div class="how-step-content"><h4>Learn, Interact &amp; Track Progress</h4><p>Engage with content, connect with peers, and watch your dashboard grow.</p></div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-left"><div class="how-num">4</div><div class="how-line"></div></div>
+          <div class="how-step-content"><h4>Earn Your Certificate</h4><p>Complete your course, receive your certificate, and showcase your skills to the world.</p></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="how-col-label"><i class="fas fa-chalkboard-teacher"></i> For Teachers</p>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-step-left"><div class="how-num">1</div><div class="how-line"></div></div>
+          <div class="how-step-content"><h4>Create Your Free Account</h4><p>Register as an instructor — free to join, no hidden fees or upfront costs.</p></div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-left"><div class="how-num">2</div><div class="how-line"></div></div>
+          <div class="how-step-content"><h4>Design &amp; Build Your Course</h4><p>Use our intuitive builder to craft engaging video lessons, quizzes, and assignments.</p></div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-left"><div class="how-num">3</div><div class="how-line"></div></div>
+          <div class="how-step-content"><h4>Publish &amp; Reach Global Learners</h4><p>Go live with one click and instantly connect with thousands of eager learners worldwide.</p></div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-left"><div class="how-num">4</div><div class="how-line"></div></div>
+          <div class="how-step-content"><h4>Build Audience &amp; Earn Income</h4><p>Grow your student base, track revenue, and earn passively from your expertise.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURED COURSES ── -->
+<section class="courses-section" id="courses">
+  <div class="courses-header">
+    <div>
+      <p class="sec-tag">Popular Picks</p>
+      <h2 class="sec-title" style="margin-bottom:6px;">Discover Our Most Popular Courses</h2>
+      <p class="sec-sub">Handpicked by learners just like you.</p>
+    </div>
+  </div>
+  <div class="courses-filters">
+    <button class="filter-btn active" data-filter="all">All Courses</button>
+    <button class="filter-btn" data-filter="programming">Programming</button>
+    <button class="filter-btn" data-filter="design">Design</button>
+    <button class="filter-btn" data-filter="web-development">Web Development</button>
+  </div>
+  <div class="courses-grid">
+    <div class="course-card" data-category="programming">
+      <img src="https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=600&q=80" alt="Python course" />
+      <div class="card-body">
+        <p class="card-cat">Programming</p>
+        <h3>Complete Python Masterclass for Web Development</h3>
+        <p class="card-teacher"><i class="fas fa-user" style="color:var(--orange);margin-right:5px;"></i>Rahul Sharma</p>
+        <div class="card-bottom">
+          <span class="card-stars">★★★★★ <span style="color:var(--text-muted);font-size:11px;">4.9</span></span>
+          <span class="card-dur"><i class="fas fa-clock"></i> 6h 40m</span>
+        </div>
+      </div>
+    </div>
+    <div class="course-card" data-category="design">
+      <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&q=80" alt="UI/UX Design" />
+      <div class="card-body">
+        <p class="card-cat">Design</p>
+        <h3>UI/UX Design Fundamentals: Build Beautiful Interfaces</h3>
+        <p class="card-teacher"><i class="fas fa-user" style="color:var(--orange);margin-right:5px;"></i>Priya Mehta</p>
+        <div class="card-bottom">
+          <span class="card-stars">★★★★★ <span style="color:var(--text-muted);font-size:11px;">4.8</span></span>
+          <span class="card-dur"><i class="fas fa-clock"></i> 4h 15m</span>
+        </div>
+      </div>
+    </div>
+    <div class="course-card" data-category="web-development">
+      <img src="https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&q=80" alt="React and Node.js" />
+      <div class="card-body">
+        <p class="card-cat">Front End</p>
+        <h3>Full Stack Web Development with React &amp; Node.js</h3>
+        <p class="card-teacher"><i class="fas fa-user" style="color:var(--orange);margin-right:5px;"></i>Arjun Verma</p>
+        <div class="card-bottom">
+          <span class="card-stars">★★★★☆ <span style="color:var(--text-muted);font-size:11px;">4.7</span></span>
+          <span class="card-dur"><i class="fas fa-clock"></i> 8h 20m</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="courses-cta"><a href="#" class="btn-outline">View All Courses &nbsp;→</a></div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials-section" id="testimonials">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="t-header">
+      <p class="sec-tag">Testimonials</p>
+      <h2 class="sec-title">Hear from Our Students and Teachers</h2>
+      <p class="sec-sub" style="max-width:460px;margin:0 auto 28px;">Real stories from people who achieved their goals with us.</p>
+    </div>
+    <div class="rating-row">
+      <div class="rating-big-num">4.8</div>
+      <div class="rating-info">
+        <div class="stars">★★★★★</div>
+        <p>2,394 Ratings &nbsp;·&nbsp; Google Reviews</p>
+      </div>
+    </div>
+    <div class="t-grid">
+      <div class="t-card">
+        <span class="t-tag student">Student</span>
+        <p class="quote">"Vidya Pathgamni transformed my learning experience. The courses are high-quality, and the community is super supportive. I landed my first dev job within 3 months!"</p>
+        <div class="t-footer">
+          <div class="t-person">
+            <div class="t-avatar"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&q=80" alt="Anjali Singh" /></div>
+            <div><p class="t-name">Anjali Singh</p><p class="t-role">Full Stack Web Dev Course</p></div>
+          </div>
+          <span class="t-stars">★★★★★</span>
+        </div>
+      </div>
+      <div class="t-card">
+        <span class="t-tag teacher">Teacher</span>
+        <p class="quote">"Creating and selling courses on Vidya Pathgamni has been incredibly rewarding. The platform is user-friendly, and the support team is always there to help!"</p>
+        <div class="t-footer">
+          <div class="t-person">
+            <div class="t-avatar"><img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=200&q=80" alt="Rajan Kumar" /></div>
+            <div><p class="t-name">Rajan Kumar</p><p class="t-role">Instructor · Data Science</p></div>
+          </div>
+          <span class="t-stars">★★★★★</span>
+        </div>
+      </div>
+      <div class="t-card">
+        <span class="t-tag student">Student</span>
+        <p class="quote">"The progress tracking dashboard kept me on track every single day. I loved learning at my own pace without any pressure. Highly recommend to everyone!"</p>
+        <div class="t-footer">
+          <div class="t-person">
+            <div class="t-avatar"><img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200&q=80" alt="Vikram Patel" /></div>
+            <div><p class="t-name">Vikram Patel</p><p class="t-role">Python Masterclass</p></div>
+          </div>
+          <span class="t-stars">★★★★★</span>
+        </div>
+      </div>
+      <div class="t-card">
+        <span class="t-tag teacher">Teacher</span>
+        <p class="quote">"The analytics dashboard gives me real insight into what my students love. I've grown my audience to over 5,000 students in just 6 months — phenomenal platform!"</p>
+        <div class="t-footer">
+          <div class="t-person">
+            <div class="t-avatar"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&q=80" alt="Deepak Malhotra" /></div>
+            <div><p class="t-name">Deepak Malhotra</p><p class="t-role">Instructor · UI/UX Design</p></div>
+          </div>
+          <span class="t-stars">★★★★★</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── KEY BENEFITS ── -->
+<section class="benefits-section" id="benefits">
+  <div class="benefits-header">
+    <p class="sec-tag">Why Us</p>
+    <h2 class="sec-title">Why Vidya Pathgamni is the Right Choice for You</h2>
+  </div>
+  <div class="benefits-cols">
+    <div class="benefit-col s-col">
+      <div class="benefit-col-title"><i class="fas fa-user-graduate"></i> For Students</div>
+      <ul class="benefit-list">
+        <li><i class="fas fa-check-circle"></i> Access Diverse, Expert-Led Courses</li>
+        <li><i class="fas fa-check-circle"></i> Learn from Industry Leaders</li>
+        <li><i class="fas fa-check-circle"></i> Flexible Schedule — Study Anytime</li>
+        <li><i class="fas fa-check-circle"></i> Career Growth &amp; Job-Ready Skills</li>
+        <li><i class="fas fa-check-circle"></i> Supportive Learner Community</li>
+        <li><i class="fas fa-check-circle"></i> Recognised Digital Certificates</li>
+      </ul>
+    </div>
+    <div class="benefit-col t-col">
+      <div class="benefit-col-title"><i class="fas fa-chalkboard-teacher"></i> For Teachers</div>
+      <ul class="benefit-list">
+        <li><i class="fas fa-check-circle"></i> Global Reach — Thousands of Learners</li>
+        <li><i class="fas fa-check-circle"></i> Easy, Intuitive Course Creation</li>
+        <li><i class="fas fa-check-circle"></i> Monetization &amp; Passive Income</li>
+        <li><i class="fas fa-check-circle"></i> Powerful Analytics Dashboard</li>
+        <li><i class="fas fa-check-circle"></i> Brand Building &amp; Visibility</li>
+        <li><i class="fas fa-check-circle"></i> Dedicated Marketing Support</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ── -->
+<section class="cta-section" id="cta">
+  <div class="cta-inner">
+    <p class="sec-tag">Get Started Today</p>
+    <h2>Ready to Elevate Your Education or Impact the World?</h2>
+    <p>Join our growing community of learners and educators today. Your potential is limitless — let's unlock it together.</p>
+    <div class="cta-btns">
+      <a href="login.html" class="btn-cta-primary">Start Your Learning Journey Now</a>
+      <a href="signup.html" class="btn-cta-secondary">Launch Your First Course Today</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="faq-section" id="faq">
+  <div class="faq-header">
+    <p class="sec-tag">Frequently Asked Questions</p>
+    <h2 class="sec-title">Got Questions? We've Got Answers</h2>
+    <p class="sec-sub">Find quick answers to the most common questions about our platform.</p>
+  </div>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <div class="faq-question">How do I enroll in a course? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-answer">Simply create a free account, browse our course catalog, and click "Enroll" on any course that interests you. Payment is only required for premium courses.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">Are the courses self-paced? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-answer">Yes! All our courses are designed for flexible learning. Study at your own pace, revisit lessons anytime, and complete assignments on your schedule.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">Do I get a certificate upon completion? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-answer">Absolutely! Every course completion earns you a digital certificate that you can share on LinkedIn, add to your resume, or showcase to employers.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">How do I become a teacher on the platform? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-answer">Sign up as a teacher, complete our quick instructor verification, and start creating your first course. We provide all the tools and support you need.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">What are the fees for teachers? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-answer">Creating and publishing courses is completely free. We only take a small commission (15%) on course sales to cover platform costs and support.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">Is there customer support available? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-answer">Yes! Our support team is available 24/7 via email, live chat, and our comprehensive help center. We're here to help you succeed.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">Can I access courses on mobile devices? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-answer">Definitely! Our platform is fully responsive and works seamlessly on smartphones, tablets, and desktops. Learn anywhere, anytime.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">What if I'm not satisfied with a course? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-answer">We offer a 30-day money-back guarantee on all paid courses. If you're not happy, we'll refund your payment — no questions asked.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <span class="footer-brand">Vidya <em>Pathgamni</em></span>
+      <p class="footer-desc">Empowering students and educators across the globe with world-class online learning experiences.</p>
+      <div class="social-row">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Courses</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Features</h5>
+      <ul>
+        <li><a href="#">For Students</a></li>
+        <li><a href="#">For Teachers</a></li>
+        <li><a href="#">Certificates</a></li>
+        <li><a href="#">Analytics</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Support</h5>
+      <ul>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Help Center</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Get In Touch</h5>
+      <div class="contact-block">
+        <p><i class="fas fa-map-marker-alt"></i> 45 Education Lane, New Delhi, India 110001</p>
+        <p><i class="fas fa-phone"></i> +91 98765 43210</p>
+        <p><i class="fas fa-envelope"></i> hello@vidyapathgamni.com</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Vidya Pathgamni. All rights reserved.</p>
+    <div class="footer-bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Help Center</a>
+    </div>
+  </div>
+</footer>
+
+<script src="landingpage.js"></script>
+
+</body>
+</html>

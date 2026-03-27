@@ -1,0 +1,104 @@
+/* General Styling */
+:root {
+  --player-bg: #f0f2f5;
+  --accent-color: #0d6efd;
+  --sidebar-active-bg: #e7f1ff;
+}
+
+body {
+  background-color: var(--player-bg);
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+/* Top Navigation */
+.top-navbar {
+  background: #fff;
+  border-bottom: 1px solid #dee2e6;
+  padding: 10px 0;
+}
+
+.top-navbar a {
+  text-decoration: none;
+  color: #6c757d;
+  margin-right: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.top-navbar a:hover {
+  color: var(--accent-color);
+}
+
+/* Secondary Header (Title & Back Button) */
+.navbar {
+  background: white !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  margin-bottom: 1rem;
+}
+
+/* Chapter List Styling */
+#chapterList {
+  max-height: 70vh;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.list-group-item {
+  border: none;
+  padding: 15px;
+  margin-bottom: 5px;
+  border-radius: 8px !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  color: #495057;
+  background-color: #f8f9fa;
+}
+
+.list-group-item:hover {
+  background-color: #f1f3f5;
+  color: var(--accent-color);
+}
+
+.list-group-item.active {
+  background-color: var(--sidebar-active-bg) !important;
+  color: var(--accent-color) !important;
+  border-left: 4px solid var(--accent-color);
+  font-weight: 600;
+}
+
+/* Video Player Container */
+.ratio-16x9 {
+  background-color: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Buttons and Links */
+#notesLink {
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+/* Scrollbar Styling for Chapter List */
+#chapterList::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chapterList::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+/* Responsive Tweaks */
+@media (max-width: 991px) {
+  #chapterList {
+    max-height: 300px;
+    margin-bottom: 20px;
+  }
+}
