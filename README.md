@@ -170,3 +170,7 @@ The platform focuses on creating a seamless experience where students can learn,
 📊 Advanced learning analytics
 
 Learn. Teach. Grow. — All in one place.
+
+
+NAME :-
+https://vidyapathgamni.netlify.app/
