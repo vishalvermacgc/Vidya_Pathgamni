@@ -126,6 +126,7 @@ The platform includes a dedicated video-player interface for course-based learni
 - Dedicated video-learning interface
 
 ---
+NAME :- https://vidyapathgamni.netlify.app/
 
 ## 📂 Project Structure
 
@@ -172,5 +173,4 @@ The platform focuses on creating a seamless experience where students can learn,
 Learn. Teach. Grow. — All in one place.
 
 
-NAME :-
-https://vidyapathgamni.netlify.app/
+
